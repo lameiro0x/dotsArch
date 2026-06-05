@@ -1,0 +1,17 @@
+# Backups
+*.bak
+*.bak-*
+*.archived-*
+
+# Fish: estado/variables/historial privados (no portables)
+.config/fish/fish_variables
+.config/fish/fish_history
+.config/fish/completions/
+
+# Buffers / cachés de editores
+.config/micro/buffers/
+
+# Basura del sistema
+*.swp
+*~
+.DS_Store

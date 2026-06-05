@@ -1,0 +1,79 @@
+# Prompt de dos líneas estilo minimal
+# ╭─ ~/ruta · rama
+# ╰─ 
+format = "[╭─](fg:#666666) $directory$git_branch$git_status$cmd_duration\n[╰─](fg:#666666) $character"
+
+[directory]
+style = "fg:#c8c8c8"
+format = "[$path]($style)"
+truncation_length = 3
+truncate_to_repo = true
+truncation_symbol = "…/"
+
+[git_branch]
+symbol = ""
+style = "fg:#888888"
+format = " [·](fg:#555555) [$branch]($style)"
+
+[git_status]
+style = "fg:#666666"
+format = "[$all_status$ahead_behind]($style)"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+modified = "~"
+staged = "+"
+untracked = "?"
+deleted = "-"
+conflicted = "!"
+
+[cmd_duration]
+min_time = 2000
+format = " [${duration}](fg:#555555)"
+
+[character]
+success_symbol = "[](fg:#c8c8c8)"
+error_symbol   = "[](fg:#b85c5c)"
+vimcmd_symbol  = "[](fg:#c8c8c8)"
+
+[package]
+disabled = true
+[nodejs]
+disabled = true
+[python]
+disabled = true
+[rust]
+disabled = true
+[golang]
+disabled = true
+[java]
+disabled = true
+[c]
+disabled = true
+[cmake]
+disabled = true
+[docker_context]
+disabled = true
+[aws]
+disabled = true
+[gcloud]
+disabled = true
+[helm]
+disabled = true
+[terraform]
+disabled = true
+[kubernetes]
+disabled = true
+[conda]
+disabled = true
+[lua]
+disabled = true
+[ruby]
+disabled = true
+[php]
+disabled = true
+[swift]
+disabled = true
+[nim]
+disabled = true
+[zig]
+disabled = true

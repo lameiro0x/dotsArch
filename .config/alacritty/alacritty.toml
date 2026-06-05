@@ -1,0 +1,56 @@
+[window]
+padding = { x = 28, y = 22 }
+decorations = "none"
+opacity = 0.97
+startup_mode = "Windowed"
+
+[font]
+normal = { family = "JetBrainsMono Nerd Font Peonza", style = "Regular" }
+bold = { family = "JetBrainsMono Nerd Font Peonza", style = "Bold" }
+italic = { family = "JetBrainsMono Nerd Font Peonza", style = "Italic" }
+size = 13.0
+
+[colors.primary]
+background = "#0d0d0d"
+foreground = "#c8c8c8"
+
+[colors.cursor]
+text = "#0d0d0d"
+cursor = "#aaaaaa"
+
+[colors.selection]
+background = "#2a2a2a"
+foreground = "#eeeeee"
+
+[colors.normal]
+black   = "#1a1a1a"
+red     = "#993333"
+green   = "#557755"
+yellow  = "#996633"
+blue    = "#446688"
+magenta = "#775577"
+cyan    = "#447777"
+white   = "#c8c8c8"
+
+[colors.bright]
+black   = "#444444"
+red     = "#bb4444"
+green   = "#668866"
+yellow  = "#aa8844"
+blue    = "#5588bb"
+magenta = "#886688"
+cyan    = "#558888"
+white   = "#eeeeee"
+
+[cursor]
+style = { shape = "Block", blinking = "On" }
+blink_interval = 600
+
+[scrolling]
+history = 10000
+
+[selection]
+save_to_clipboard = true
+
+[env]
+TERM = "xterm-256color"

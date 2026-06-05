@@ -1,0 +1,109 @@
+/* ═══════════════════════════════════════════════════
+   rofi — réplica del lanzador (negro · input azul ·
+   selección con contorno claro). Estilo de fuzzle.png
+   ═══════════════════════════════════════════════════ */
+
+* {
+    bg:        #0d0d0d;
+    fg:        #f0f0f0;
+    muted:     #8a8a8a;
+    blue:      #3b82f6;
+    sel-bg:    #161616;
+    sel-bd:    #d6d6d6;
+    win-bd:    #2a2a2a;
+    transparent: rgba(0,0,0,0);
+}
+
+configuration {
+    show-icons:          true;
+    icon-theme:          "Papirus-Dark";
+    drun-display-format: "{name}";
+    display-drun:        " ";
+    font:                "JetBrainsMono Nerd Font 12";
+}
+
+window {
+    background-color: @bg;
+    border:           1px;
+    border-color:     @win-bd;
+    border-radius:    8px;
+    width:            500px;
+    padding:          14px;
+    location:         center;
+    anchor:           center;
+}
+
+mainbox {
+    background-color: @transparent;
+    spacing:          10px;
+    children:         [ inputbar, listview ];
+}
+
+/* ─── BUSCADOR: caja con borde azul ─── */
+inputbar {
+    background-color: @bg;
+    border:           2px;
+    border-color:     @sel-bd;
+    border-radius:    6px;
+    padding:          9px 11px;
+    spacing:          9px;
+    children:         [ prompt, entry ];
+}
+
+prompt {
+    background-color: @transparent;
+    text-color:       @muted;
+    font:             "JetBrainsMono Nerd Font 13";
+    vertical-align:   0.5;
+}
+
+entry {
+    background-color: @transparent;
+    text-color:       @fg;
+    placeholder:      "";
+    placeholder-color:@muted;
+    cursor:           text;
+    vertical-align:   0.5;
+}
+
+/* ─── LISTA ─── */
+listview {
+    background-color: @transparent;
+    lines:            7;
+    columns:          1;
+    spacing:          6px;
+    scrollbar:        false;
+    fixed-height:     true;
+    cycle:            true;
+    dynamic:          false;
+}
+
+element {
+    background-color: @transparent;
+    text-color:       @fg;
+    padding:          8px 10px;
+    spacing:          11px;
+    border-radius:    6px;
+}
+
+/* Seleccionado: interior oscuro + contorno claro (no relleno blanco) */
+element selected {
+    background-color: @sel-bg;
+    text-color:       #ffffff;
+    border:           1px;
+    border-color:     @sel-bd;
+    border-radius:    6px;
+}
+
+element-icon {
+    background-color: @transparent;
+    size:             1.3em;
+    vertical-align:   0.5;
+}
+
+element-text {
+    background-color: @transparent;
+    text-color:       inherit;
+    vertical-align:   0.5;
+    highlight:        bold;
+}

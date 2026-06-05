@@ -1,0 +1,108 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 48,
+    "margin-top": 8,
+    "exclusive-zone": 56,
+
+    "modules-left": [
+        "custom/arch",
+        "hyprland/window"
+    ],
+    "modules-center": [
+        "hyprland/workspaces"
+    ],
+    "modules-right": [
+        "custom/brightness",
+        "custom/audio",
+        "custom/network",
+        "custom/battery",
+        "clock"
+    ],
+
+    "custom/arch": {
+        "format": "󰣇",
+        "tooltip": false
+    },
+
+    "hyprland/window": {
+        "format": "{title}",
+        "max-length": 28,
+        "separate-outputs": true,
+        "rewrite": {
+            "^$":                    "Desktop",
+            "^~$":                   "󰍛 kitty",
+            "^~/(.*)":               "󰍛 $1",
+            "^/(.*)":                "󰍛 /$1",
+            "(.*)itty(.*)":          "󰍛 kitty",
+            "[Ff]irefox(.*)":        "󰈹 Firefox",
+            "[Cc]hromium(.*)":       "󰊯 Chromium",
+            "[Cc]ode - (.*)":        "󰨞 $1",
+            "[Vv]isual [Ss]tudio.*": "󰨞 Code",
+            "(.*)nvim(.*)":          "󰕷 nvim",
+            "(.*)Neovim(.*)":        "󰕷 nvim",
+            "[Tt]hunar(.*)":         "󰉋 Files",
+            "[Nn]autilus(.*)":       "󰉋 Files"
+        }
+    },
+
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "format-icons": {
+            "1": "一",
+            "2": "二",
+            "3": "三",
+            "4": "四",
+            "5": "五",
+            "6": "六",
+            "7": "七",
+            "8": "八",
+            "9": "九"
+        },
+        "on-click": "activate",
+        "on-scroll-up": "hyprctl dispatch workspace e+1",
+        "on-scroll-down": "hyprctl dispatch workspace e-1",
+        "persistent_workspaces": {
+            "*": [1, 2, 3, 4, 5]
+        }
+    },
+
+    "custom/brightness": {
+        "exec": "~/.config/waybar/scripts/brightness.sh",
+        "return-type": "json",
+        "interval": 5,
+        "tooltip": true,
+        "on-click": "~/.config/waybar/scripts/brightness_slider.sh",
+        "on-scroll-up": "brightnessctl set 5%+",
+        "on-scroll-down": "brightnessctl set 5%-"
+    },
+
+    "custom/audio": {
+        "exec": "~/.config/waybar/scripts/audio.sh",
+        "return-type": "json",
+        "interval": 3,
+        "tooltip": true,
+        "on-click": "~/.config/waybar/scripts/audio_slider.sh",
+        "on-click-right": "pavucontrol"
+    },
+
+    "custom/network": {
+        "exec": "~/.config/waybar/scripts/network.sh",
+        "return-type": "json",
+        "interval": 3,
+        "tooltip": true
+    },
+
+    "custom/battery": {
+        "exec": "~/.config/waybar/scripts/battery.sh",
+        "return-type": "json",
+        "interval": 30,
+        "tooltip": true
+    },
+
+    "clock": {
+        "format": "{:%H:%M}",
+        "tooltip-format": "{:%A, %d %B %Y}",
+        "interval": 60
+    }
+}

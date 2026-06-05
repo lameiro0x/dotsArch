@@ -1,0 +1,196 @@
+/* ═══════════════════════════════════════════════════
+   Waybar — Black Pill · High Contrast
+   Pill:    #0e0e10  (solid black, no transparency)
+   Text:    #c8c8c8  /  #888888  (gray scale only)
+   Active:  #ffffff bg + #080808 text  (pure contrast)
+   ═══════════════════════════════════════════════════ */
+
+* {
+    font-family: "JetBrainsMono Nerd Font", "Noto Sans CJK SC", "Noto Sans", monospace;
+    font-size: 13px;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+    transition-property: background-color, color;
+    transition-duration: 150ms;
+    transition-timing-function: ease;
+}
+
+/* ─── FULL-WIDTH BAR: 100% transparent, no trace ─────── */
+/* This selector must have zero visual presence.          */
+/* The rectangular trace was caused by box-shadow and     */
+/* rgba backgrounds leaking outside the pill.             */
+window#waybar {
+    background:       transparent;
+    background-color: rgba(0, 0, 0, 0);
+    border:           none;
+    box-shadow:       none;
+    color:            #c8c8c8;
+}
+
+/* ─── THE ISLANDS: three solid black pills ──────────── */
+/* Left (arch + window), center (workspaces), right (rest). */
+/* All share the same pill look; Waybar spaces them apart.  */
+.modules-left,
+.modules-center,
+.modules-right {
+    background:    #0e0e10;
+    border-radius: 100px;
+    margin-top:    8px;
+    margin-bottom: 4px;
+    padding:       0 4px;
+    border:        1px solid rgba(255, 255, 255, 0.05);
+    box-shadow:    none;
+}
+
+/* Side islands sit a touch in from the screen edges. */
+.modules-left  { margin-left:  8px; }
+.modules-right { margin-right: 8px; }
+
+/* ─── ARCH ICON ─────────────────────────────────────── */
+#custom-arch {
+    color:       #b0b0b0;
+    padding:     0 14px 0 16px;
+    font-size:   17px;
+}
+
+/* ─── WINDOW / ACTIVE APP ───────────────────────────── */
+#window {
+    color:     #808080;
+    padding:   0 14px;
+    font-size: 13px;
+    min-width: 56px;
+}
+
+#window.empty {
+    color:     #2e2e2e;
+    min-width: 0;
+    padding:   0 4px;
+}
+
+/* ─── WORKSPACES ────────────────────────────────────── */
+#workspaces {
+    padding: 0 4px;
+    margin:  0;
+}
+
+#workspaces button {
+    all:           unset;
+    background:    transparent;
+    color:         #585858;
+    border-radius: 100px;
+    padding:       3px 10px;
+    margin:        3px 1px;
+    min-width:     28px;
+    font-size:     14px;
+    font-family:   "Noto Sans CJK SC", "Noto Sans", sans-serif;
+    transition:    all 150ms ease;
+}
+
+/* Active: solid white pill + black symbol — max contrast */
+#workspaces button.active {
+    background:  #ffffff;
+    color:       #080808;
+    font-weight: 700;
+    padding:     3px 13px;
+    min-width:   32px;
+    border:      none;
+    box-shadow:  none;
+}
+
+#workspaces button:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.08);
+    color:      #b8b8b8;
+}
+
+#workspaces button.urgent {
+    background: rgba(180, 60, 60, 0.28);
+    color:      #e08080;
+}
+
+/* ─── BRIGHTNESS ────────────────────────────────────── */
+#custom-brightness {
+    color:     #909090;
+    padding:   0 14px 0 16px;
+    font-size: 16px;
+}
+
+#custom-brightness.unavailable {
+    color: #444444;
+}
+
+/* ─── CUSTOM AUDIO ──────────────────────────────────── */
+#custom-audio {
+    color:     #909090;
+    padding:   0 14px;
+    font-size: 16px;
+}
+
+#custom-audio.muted,
+#custom-audio.unavailable {
+    color: #444444;
+}
+
+/* ─── NETWORK ────────────────────────────────────────── */
+#custom-network {
+    color:     #909090;
+    padding:   0 14px;
+    font-size: 16px;
+}
+
+#custom-network.disconnected {
+    color: #3a3a3a;
+}
+
+/* ─── BATTERY ────────────────────────────────────────── */
+#custom-battery {
+    color:     #909090;
+    padding:   0 14px 0 10px;
+    font-size: 16px;
+}
+
+#custom-battery.charging {
+    color: #80c878;
+}
+
+#custom-battery.warning {
+    color: #c8a848;
+}
+
+#custom-battery.critical {
+    color:     #c05040;
+    animation: blink 1.4s linear infinite;
+}
+
+#custom-battery.ac {
+    color: #505050;
+}
+
+@keyframes blink {
+    to { opacity: 0.38; }
+}
+
+/* ─── CLOCK ──────────────────────────────────────────── */
+#clock {
+    color:          #e0e0e0;
+    font-weight:    500;
+    padding:        0 16px 0 10px;
+    letter-spacing: 1px;
+    font-size:      13px;
+}
+
+/* ─── TOOLTIP ────────────────────────────────────────── */
+tooltip {
+    background:    #0e0e10;
+    border:        1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 10px;
+    color:         #cccccc;
+    padding:       8px 14px;
+    box-shadow:    none;
+}
+
+tooltip label {
+    color:     #cccccc;
+    font-size: 12px;
+    padding:   2px 0;
+}

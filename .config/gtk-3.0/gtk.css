@@ -1,0 +1,118 @@
+/* ═══════════════════════════════════════════════════
+   GTK3 — Grayscale / High Contrast Black
+   Mata el azul de Adwaita y oscurece los fondos.
+   Afecta a Thunar y a los popups de yad (volumen/brillo).
+   ═══════════════════════════════════════════════════ */
+
+/* ─── Paleta base (sustituye los colores con nombre de Adwaita) ─── */
+@define-color theme_bg_color                 #161618;
+@define-color theme_base_color               #0e0e10;
+@define-color theme_fg_color                 #d8d8d8;
+@define-color theme_text_color               #e4e4e4;
+@define-color theme_selected_bg_color        #3d3d40;
+@define-color theme_selected_fg_color        #f0f0f0;
+@define-color theme_unfocused_selected_bg_color #4a4a4a;
+@define-color theme_unfocused_selected_fg_color #e4e4e4;
+@define-color insensitive_bg_color           #161618;
+@define-color insensitive_fg_color           #5a5a5a;
+@define-color borders                         #2a2a2a;
+@define-color unfocused_borders               #222224;
+
+/* Acentos (links, etc.) en gris en vez de azul */
+@define-color accent_bg_color   #ffffff;
+@define-color accent_fg_color   #080808;
+@define-color accent_color      #d0d0d0;
+@define-color link_color        #b8b8b8;
+@define-color visited_link_color #888888;
+
+/* ─── THUNAR: vistas en negro, texto claro ─── */
+.view,
+treeview.view,
+iconview,
+list,
+.thunar .view {
+    background-color: #0e0e10;
+    color:            #d8d8d8;
+}
+
+/* Selección en escala de grises (sin azul) */
+.view:selected,
+treeview.view:selected,
+iconview:selected,
+list row:selected,
+.view text:selected,
+*:selected {
+    background-color: #3d3d40;
+    color:            #f0f0f0;
+}
+
+.view:selected:backdrop,
+iconview:selected:backdrop,
+list row:selected:backdrop {
+    background-color: #4a4a4a;
+    color:            #e4e4e4;
+}
+
+/* Panel lateral / lugares en negro */
+.sidebar,
+placessidebar,
+placessidebar list {
+    background-color: #121214;
+    color:            #c8c8c8;
+}
+
+placessidebar row:selected {
+    background-color: #3d3d40;
+    color:            #f0f0f0;
+}
+
+/* Cabeceras, barra de ruta y toolbars en gris muy oscuro */
+headerbar,
+.titlebar,
+toolbar,
+.toolbar,
+.path-bar,
+button.path-bar-button {
+    background-color: #161618;
+    color:            #d0d0d0;
+    border-color:     #2a2a2a;
+}
+
+/* ─── SLIDERS (scale) en escala de grises ─── */
+/* Cubre los popups de yad de volumen y brillo y cualquier scale GTK */
+scale trough {
+    background-color: #2a2a2a;
+    background-image: none;
+    border:           none;
+    min-height:       6px;
+    border-radius:    100px;
+}
+
+scale highlight,
+scale progress {
+    background-color: #d0d0d0;
+    background-image: none;
+    border:           none;
+    border-radius:    100px;
+}
+
+scale slider {
+    background-color: #ffffff;
+    background-image: none;
+    border:           none;
+    box-shadow:       none;
+    min-width:        16px;
+    min-height:       16px;
+    border-radius:    100px;
+}
+
+scale value,
+scale label {
+    color: #d8d8d8;
+}
+
+/* Ventanas de los popups yad: fondo negro sólido */
+window.vol-slider,
+window.brightness-slider {
+    background-color: #0e0e10;
+}

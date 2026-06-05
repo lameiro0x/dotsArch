@@ -1,0 +1,27 @@
+color:
+  when: always
+  theme: default
+
+icons:
+  when: always
+  theme: fancy
+  separator: " "
+
+layout: grid
+
+sorting:
+  column: name
+  reverse: false
+  dir-grouping: first
+
+blocks:
+  - permission
+  - user
+  - group
+  - size
+  - date
+  - name
+
+date: relative
+
+symlink-arrow: "→"

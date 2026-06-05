@@ -1,0 +1,113 @@
+[flavor]
+use = ""
+
+# ── Manager ──────────────────────────────────────────────────────────────────
+[manager]
+cwd = { fg = "#888888" }
+
+# Hovered item
+hovered         = { fg = "#ffffff", bg = "#1e1e20", bold = true }
+preview_hovered = { underline = true }
+
+# Search
+find_keyword  = { fg = "#ffffff", italic = true }
+find_position = { fg = "#888888", italic = true }
+
+# Selection markers
+marker_selected = { fg = "#888888", bg = "#888888" }
+marker_copied   = { fg = "#505050", bg = "#505050" }
+marker_cut      = { fg = "#c05040", bg = "#c05040" }
+
+# Tabs
+tab_active   = { fg = "#ffffff", bold = true }
+tab_inactive = { fg = "#444444" }
+
+# Borders
+border_symbol = "│"
+border_style  = { fg = "#333333" }
+
+# ── Status bar ───────────────────────────────────────────────────────────────
+[status]
+separator_open  = ""
+separator_close = ""
+separator_style = { fg = "#1e1e20", bg = "#1e1e20" }
+
+mode_normal = { fg = "#0e0e10", bg = "#aaaaaa", bold = true }
+mode_select = { fg = "#0e0e10", bg = "#cccccc", bold = true }
+mode_unset  = { fg = "#0e0e10", bg = "#666666", bold = true }
+
+progress_label  = { fg = "#ffffff", bold = true }
+progress_normal = { fg = "#888888", bg = "#1e1e20" }
+progress_error  = { fg = "#c05040", bg = "#1e1e20" }
+
+permissions_t = { fg = "#555555" }
+permissions_r = { fg = "#aaaaaa" }
+permissions_w = { fg = "#888888" }
+permissions_x = { fg = "#cccccc", bold = true }
+permissions_s = { fg = "#444444" }
+
+# ── Input box ────────────────────────────────────────────────────────────────
+[input]
+border   = { fg = "#555555" }
+title    = { fg = "#aaaaaa" }
+value    = { fg = "#cccccc" }
+selected = { reversed = true }
+
+# ── Completion popup ─────────────────────────────────────────────────────────
+[completion]
+border   = { fg = "#555555" }
+active   = { fg = "#ffffff", bg = "#1e1e20", bold = true }
+inactive = { fg = "#888888" }
+
+# ── Task manager ─────────────────────────────────────────────────────────────
+[tasks]
+border  = { fg = "#555555" }
+title   = { fg = "#aaaaaa" }
+hovered = { fg = "#ffffff", underline = true }
+
+# ── Which-key overlay ────────────────────────────────────────────────────────
+[which]
+mask            = { bg = "#0e0e10" }
+cand            = { fg = "#cccccc" }
+rest            = { fg = "#555555" }
+desc            = { fg = "#888888" }
+separator       = "  "
+separator_style = { fg = "#444444" }
+
+# ── Notifications ─────────────────────────────────────────────────────────────
+[notify]
+title_info  = { fg = "#aaaaaa", bold = true }
+title_warn  = { fg = "#c8a848", bold = true }
+title_error = { fg = "#c05040", bold = true }
+
+# ── Help overlay ─────────────────────────────────────────────────────────────
+[help]
+on      = { fg = "#ffffff" }
+exec    = { fg = "#cccccc" }
+desc    = { fg = "#888888" }
+hovered = { fg = "#ffffff", bg = "#1e1e20", bold = true }
+footer  = { fg = "#444444", bg = "#0e0e10" }
+
+# ── File type colors ─────────────────────────────────────────────────────────
+[filetype]
+rules = [
+    # Images
+    { mime = "image/*",                     fg = "#aaaaaa" },
+    # Video
+    { mime = "video/*",                     fg = "#909090" },
+    # Audio
+    { mime = "audio/*",                     fg = "#909090" },
+    # Archives
+    { mime = "application/zip",             fg = "#888888" },
+    { mime = "application/gzip",            fg = "#888888" },
+    { mime = "application/x-bzip2",         fg = "#888888" },
+    { mime = "application/x-tar",           fg = "#888888" },
+    { mime = "application/x-7z-compressed", fg = "#888888" },
+    { mime = "application/zstd",            fg = "#888888" },
+    { mime = "application/x-rar",           fg = "#888888" },
+    # Executables
+    { mime = "application/x-executable",   fg = "#cccccc", bold = true },
+    { mime = "application/x-sharedlib",    fg = "#888888" },
+    # Fallback
+    { mime = "*",                           fg = "#b0b0b0" },
+]
