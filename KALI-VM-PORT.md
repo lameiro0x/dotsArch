@@ -4,6 +4,32 @@
 > una VM Kali**. Objetivo: instalar Hyprland y dejar este escritorio funcionando
 > replicando la config de este repo.
 
+## ⚠️ ALCANCE Y PRIVACIDAD — LÉELO PRIMERO (no negociable)
+
+Esta VM Kali vive **dentro del portátil de TRABAJO del dueño** y se usará para
+**pentesting** (datos de clientes, NDA, credenciales, evidencias). Todo lo que
+leas entra en tu contexto y se transmite a la API. Por tanto:
+
+- **Tu tarea se limita a:** instalar Hyprland + ecosistema y portar la config de
+  estética/funcionamiento de este repo. **Nada más.**
+- **NO leas, abras, `cat`, `grep` ni proceses** nada fuera de lo estrictamente
+  necesario para el ricing. En concreto, NO toques:
+  `~/.ssh/`, `~/.msf4/`, `~/.config/` con tokens/credenciales, historiales de
+  shell, archivos `.ovpn`/VPN, capturas, informes, ni ningún directorio de
+  proyectos/clientes (p.ej. `~/clientes`, `~/work`, `~/engagements`, `/opt`...).
+- **Solo trabaja en:** gestores de paquetes (`apt`), `~/.config/` de las apps del
+  ricing, `~/.local/`, fuentes, temas, wallpapers, y el repo clonado en
+  `~/dotsArch`.
+- Si para una tarea del ricing necesitaras leer algo que pudiera ser sensible,
+  **PARA y pregunta al dueño** antes; no lo leas por tu cuenta.
+- No subas, copies ni envíes a ningún sitio contenido de esta máquina más allá
+  de lo que el propio ricing requiere localmente.
+- Mantén la huella mínima: nada de telemetría extra, nada de exfiltración, nada
+  de "por si acaso miro qué hay aquí".
+
+Regla de oro: **si no es estética/función del escritorio, no lo toques y no lo
+leas.**
+
 ## Entorno destino
 
 - **Kali Linux** (rolling) en **VirtualBox**.
@@ -46,10 +72,9 @@ Las configs están bajo `~/dotsArch/.config/`. Cópialas a `~/.config/` (o symli
    ```
    El **blur, sombras y animaciones** pesan mucho sin GPU. Si va a tirones, baja
    `blur passes`, desactiva `shadow` o pon `animations { enabled = false }`.
-7. **Wallpapers NO están en el repo** (gitignored). La config apunta a
-   `~/Pictures/wallpapers/manos.png` y `minimal-dark.png`. Crea el directorio y
-   usa un color sólido o un wallpaper placeholder si no existen; el dueño copiará
-   los suyos luego.
+7. **Wallpapers SÍ están en el repo**, en `~/dotsArch/wallpapers/`
+   (`manos.png`, `minimal-dark.png`). Cópialos a `~/Pictures/wallpapers/` y
+   ajusta las rutas en `hyprland.conf`/`hyprpaper.conf` para que apunten ahí.
 8. **Probar:** arranca `Hyprland` desde un TTY e itera hasta que levante.
 
 ## Reglas
