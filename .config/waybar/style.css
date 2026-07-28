@@ -98,8 +98,8 @@ window#waybar {
 
 /* The empty slot: a CJK numeral, deliberately near-invisible.
    It marks that the workspace exists without competing for attention. */
-#custom-ws1, #custom-ws2, #custom-ws3, #custom-ws4, #custom-ws5,
-#custom-ws6, #custom-ws7, #custom-ws8, #custom-ws9 {
+#custom-ws1, #custom-ws2, #custom-ws3, #custom-ws4, #custom-ws5, #custom-ws6,
+#custom-ws7, #custom-ws8, #custom-ws9, #custom-ws10, #custom-ws11 {
     background:    transparent;
     color:         #2e2e2e;
     border-radius: 100px;

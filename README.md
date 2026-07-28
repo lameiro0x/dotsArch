@@ -110,15 +110,19 @@ sudo pacman -S hyprland waybar rofi-wayland kitty alacritty thunar yazi \
 | `Super + V` | Flotante |
 | `Ctrl + Tab` | Cambiar foco entre **monitores** |
 | `Ctrl + Shift + Tab` | Mover ventana al **otro monitor** |
-| `Ctrl + 1..8` | Ir a workspace |
-| `Ctrl + Shift + 1..8` | Mover ventana a workspace |
+| `Ctrl + 1..8` | Ir a workspace (portátil) |
+| `Ctrl + 9` / `0` / `'` | Ir a workspace 9 / 10 / 11 (monitor externo) |
+| `Ctrl + Shift + 1..8` | Mover ventana a workspace (portátil) |
+| `Ctrl + Shift + 9` / `0` / `'` | Mover ventana a workspace 9 / 10 / 11 |
 | `Print` / `Shift + Print` | Captura pantalla / región |
 
 ## 🖥️ Monitores y workspaces
 
-- **Workspaces fijos por pantalla**: portátil (`eDP-1`) → workspaces **1–5**,
-  monitor externo (`HDMI-A-1`) → workspaces **6–8**. Cada workspace vive siempre
+- **Workspaces fijos por pantalla**: portátil (`eDP-1`) → workspaces **1–8**,
+  monitor externo (`HDMI-A-1`) → workspaces **9–11**. Cada workspace vive siempre
   en su monitor, así no "saltan" entre pantallas.
+- Con el monitor externo desconectado, ir a un workspace suyo (`Ctrl + 9/0/'`) lo
+  abre en el portátil y la barra lo muestra igual.
 - El monitor externo está configurado a su refresco máximo
   (`monitor=HDMI-A-1,1920x1080@144,auto,1`). Ajusta el nombre/modo a tu hardware
   con `hyprctl monitors`.
@@ -128,15 +132,20 @@ sudo pacman -S hyprland waybar rofi-wayland kitty alacritty thunar yazi \
 El módulo central de la barra no muestra números: dice **qué hay en cada workspace**.
 
 ```
-1 󱜙 hito     2 󰊯 GitHub     3 󱜙 lameir…site    ▏4 󱜙 Repos▕    5 󰕷 dotsArch
+1 󱜙 hito   2 󰊯 GitHub   3 󱜙 lameir…site  ▏4 󱜙 Repos▕  5 󰕷 dotsArch   六   七   八
 ```
 
 - Un terminal con una sesión de **Claude Code** muestra el repo en el que trabaja.
 - Un navegador muestra la página; un editor, el directorio.
 - La píldora blanca es el workspace activo. Un **anillo** alrededor de un slot significa
   que esa sesión de Claude Code está **esperando tu respuesta**.
+- Los workspaces vacíos se quedan en su numeral CJK, apagados.
 - El número de la izquierda es el del workspace: se corresponde con `Ctrl + N`.
 - Clic para ir al workspace, rueda para cambiar. Tooltip con el inventario completo.
+- La etiqueta se acorta sola según se llena la pantalla (14 caracteres con cuatro
+  workspaces ocupados, 8 con ocho), para que la isla no crezca sin límite. Solo cambia
+  al ocuparse o vaciarse un workspace: nunca al cambiar de foco ni al retitularse una
+  pestaña, así la fila no baila.
 
 Lo alimenta `waybar/scripts/wsctx-daemon.py`, que corre como servicio de usuario y publica
 JSON pre-renderizado en `$XDG_RUNTIME_DIR/wsctx/`, despertando a la barra con `SIGRTMIN+9`:

@@ -47,14 +47,23 @@ from pathlib import Path
 DEBOUNCE_MS = 60          # coalesce an event burst into one render
 SIGNAL_NUM = 9            # waybar listens on SIGRTMIN+9
 HEARTBEAT_S = 30          # re-render even without events, to catch missed state
-# Both states clip to the same length on purpose. When the focused slot is
-# allowed to hold more text than the others, changing workspace changes widths,
-# and every label to the right of it slides. Equal lengths make focus a pure
-# change of colour: nothing moves, so the easing is actually visible.
-# 14 covers most of ~/Repos outright (`lameiro0x-site`, `financeManager`); the
-# tooltip carries the full name for the rest.
-LABEL_ACTIVE = 12
-LABEL_IDLE = 12
+# The label length is shared by every slot on an output, focused or not. Letting
+# the focused slot hold more text than the others means changing workspace
+# changes widths, and every label to its right slides; equal lengths make focus a
+# pure change of colour, so the easing is actually visible.
+#
+# It shrinks as an output fills up, because eight occupied slots at fourteen
+# characters would be ~1330px and swallow the bar. Keyed on how many slots are
+# occupied, so it only ever changes when a workspace gains or loses its last
+# window — never on focus, never when a browser retitles a tab.
+LABEL_BY_LOAD = {0: 14, 1: 14, 2: 14, 3: 14, 4: 14, 5: 13, 6: 11, 7: 9}
+LABEL_MIN = 8
+
+MAX_WS = 11  # 1-8 on the laptop, 9-11 on the external monitor
+
+
+def label_width(occupied: int) -> int:
+    return LABEL_BY_LOAD.get(occupied, LABEL_MIN)
 
 # Material Design glyphs, which is the family the rest of this bar already
 # speaks (see the `rewrite` map in config.jsonc). Measured at 13px in
@@ -80,8 +89,8 @@ WATCHED = {
     "configreloaded",
 }
 
-CJK = {1: "一", 2: "二", 3: "三", 4: "四", 5: "五",
-       6: "六", 7: "七", 8: "八", 9: "九"}
+CJK = {1: "一", 2: "二", 3: "三", 4: "四", 5: "五", 6: "六",
+       7: "七", 8: "八", 9: "九", 10: "十", 11: "十一"}
 
 # Tints. Kept in lockstep with style.css; every value here is >= 3:1 against the
 # pill background, which #585858 (the old inactive workspace colour) was not.
@@ -351,7 +360,7 @@ def describe(client: dict) -> tuple[str, str, str]:
 
 # ── Rendering ───────────────────────────────────────────────────────────────
 
-def render(entry: dict | None, wsid: int, active: bool) -> dict:
+def render(entry: dict | None, wsid: int, active: bool, width: int = 12) -> dict:
     if entry is None:
         return {
             "text": CJK.get(wsid, str(wsid)),
@@ -366,7 +375,6 @@ def render(entry: dict | None, wsid: int, active: bool) -> dict:
     waiting = state == "waiting"
     working = state == "busy"
 
-    width = LABEL_ACTIVE if active else LABEL_IDLE
     # Padded to a fixed cell count rather than clamped with CSS `min-width`.
     # GTK3 has no `text-align`, so a wider box just centres a short label and
     # the numerals stop forming a column — which is the whole point of a
@@ -497,28 +505,35 @@ def collect() -> dict | None:
 def publish(state: dict, outdir: Path, previous: dict) -> dict:
     """Write one file per (output, workspace). Returns the new rendered map."""
     rendered: dict[str, dict] = {}
+
+    def owner_of(wsid: int) -> str:
+        # A rule naming a monitor that is not plugged in is not a claim: those
+        # workspaces land on a connected output instead.
+        o = state["ws_output"].get(wsid) or ""
+        return o if o in state["outputs"] else ""
+
     for out in state["outputs"]:
         active_here = state["active"].get(out)
-        for wsid in range(1, 10):
-            owner = state["ws_output"].get(wsid)
+        # How full this output is decides the label length for all of its
+        # slots, so every slot on one screen stays the same width.
+        width = label_width(
+            sum(1 for w in state["entries"] if (owner_of(w) or out) == out)
+        )
+        for wsid in range(1, MAX_WS + 1):
+            owner = owner_of(wsid)
             key = f"{out}-{wsid}"
             occupied = wsid in state["entries"]
-            # A rule pointing at a monitor that is not plugged in is not a
-            # claim on that workspace: Hyprland hands those workspaces to a
-            # connected output instead. Honouring the rule literally hid
-            # workspaces 6-8 on the laptop, which also made them unclickable.
-            if owner and owner not in state["outputs"]:
-                owner = ""
-            # A slot belongs here if a workspace rule assigns it to this output,
-            # or if it has windows on it right now. A workspace with neither —
-            # no rule and nothing in it — is not a slot at all, so it is left
-            # blank instead of padding the bar with numerals nobody uses.
-            mine = (owner == out) if owner else occupied
+            # A slot belongs here if a workspace rule assigns it to this
+            # output, or if it holds windows, or if you are standing on it.
+            # That last case is what covers pressing Ctrl+9 with the external
+            # monitor unplugged: Hyprland puts workspace 9 on the laptop, and
+            # without this the bar would show no active pill at all.
+            mine = (owner == out) if owner else (occupied or active_here == wsid)
             if not mine:
                 rendered[key] = {"text": "", "tooltip": "", "class": ["off"]}
                 continue
             rendered[key] = render(
-                state["entries"].get(wsid), wsid, active_here == wsid
+                state["entries"].get(wsid), wsid, active_here == wsid, width
             )
         title = state.get("focused", {}).get(out, "")
         rendered[f"{out}-window"] = {
@@ -559,7 +574,7 @@ def run_once() -> int:
     # start, for a line nobody reads.
     if sys.stdout.isatty():
         for out in state["outputs"]:
-            for wsid in range(1, 10):
+            for wsid in range(1, MAX_WS + 1):
                 f = outdir / f"{out}-{wsid}.json"
                 if not f.exists():
                     continue
