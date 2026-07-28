@@ -7,10 +7,10 @@
 
     "modules-left": [
         "custom/arch",
-        "hyprland/window"
+        "custom/window"
     ],
     "modules-center": [
-        "hyprland/workspaces"
+        "group/workspaces"
     ],
     "modules-right": [
         "custom/brightness",
@@ -25,46 +25,107 @@
         "tooltip": false
     },
 
-    "hyprland/window": {
-        "format": "{title}",
-        "max-length": 28,
-        "separate-outputs": true,
-        "rewrite": {
-            "^$":                    "Desktop",
-            "^~$":                   "󰍛 kitty",
-            "^~/(.*)":               "󰍛 $1",
-            "^/(.*)":                "󰍛 /$1",
-            "(.*)itty(.*)":          "󰍛 kitty",
-            "[Ff]irefox(.*)":        "󰈹 Firefox",
-            "[Cc]hromium(.*)":       "󰊯 Chromium",
-            "[Cc]ode - (.*)":        "󰨞 $1",
-            "[Vv]isual [Ss]tudio.*": "󰨞 Code",
-            "(.*)nvim(.*)":          "󰕷 nvim",
-            "(.*)Neovim(.*)":        "󰕷 nvim",
-            "[Tt]hunar(.*)":         "󰉋 Files",
-            "[Nn]autilus(.*)":       "󰉋 Files"
-        }
+    // ── FOCUSED WINDOW ───────────────────────────────────────────────────
+    // Fed by the same daemon as the workspaces, rather than by Waybar's
+    // `rewrite`. That option runs std::regex over the raw UTF-8 bytes, so a
+    // character class written with non-ASCII codepoints compiles to a byte
+    // range and swallows the first letter of any accented title: "École"
+    // became "cole" and "Привет" became empty. The daemon strips the spinner
+    // in Python, which is codepoint-aware.
+    //
+    // No app icon here: the centre island already says which application each
+    // workspace holds. This island carries one thing — what you are doing.
+
+    "custom/window": {
+        "exec": "cat $XDG_RUNTIME_DIR/wsctx/$WAYBAR_OUTPUT_NAME-window.json",
+        "return-type": "json", "interval": 60, "signal": 9
     },
 
-    "hyprland/workspaces": {
-        "format": "{icon}",
-        "format-icons": {
-            "1": "一",
-            "2": "二",
-            "3": "三",
-            "4": "四",
-            "5": "五",
-            "6": "六",
-            "7": "七",
-            "8": "八",
-            "9": "九"
-        },
-        "on-click": "activate",
+    // ── WORKSPACES WITH CONTEXT ──────────────────────────────────────────
+    // Each workspace is its own custom module so that it stays a real event
+    // box and keeps click-to-activate; a single custom module cannot tell
+    // which part of itself was clicked.
+    //
+    // The exec is a bare `cat` with no pipeline and no redirect: Waybar kills
+    // its exec children as a process group, and any shell construct in this
+    // line leaves an orphan behind on every bar reload.
+    //
+    // Content comes from wsctx-daemon.py, which runs as a systemd --user
+    // service and signals SIGRTMIN+9 when a slot actually changes.
+    // $WAYBAR_OUTPUT_NAME is set by Waybar per bar, which is what lets one
+    // config serve both monitors: each bar reads only its own output's files.
+
+    "group/workspaces": {
+        "orientation": "horizontal",
+        "modules": [
+            "custom/ws1", "custom/ws2", "custom/ws3",
+            "custom/ws4", "custom/ws5", "custom/ws6",
+            "custom/ws7", "custom/ws8", "custom/ws9"
+        ]
+    },
+
+    "custom/ws1": {
+        "exec": "cat $XDG_RUNTIME_DIR/wsctx/$WAYBAR_OUTPUT_NAME-1.json",
+        "return-type": "json", "interval": 60, "signal": 9,
+        "on-click": "hyprctl dispatch workspace 1",
         "on-scroll-up": "hyprctl dispatch workspace e+1",
-        "on-scroll-down": "hyprctl dispatch workspace e-1",
-        "persistent_workspaces": {
-            "*": [1, 2, 3, 4, 5]
-        }
+        "on-scroll-down": "hyprctl dispatch workspace e-1"
+    },
+    "custom/ws2": {
+        "exec": "cat $XDG_RUNTIME_DIR/wsctx/$WAYBAR_OUTPUT_NAME-2.json",
+        "return-type": "json", "interval": 60, "signal": 9,
+        "on-click": "hyprctl dispatch workspace 2",
+        "on-scroll-up": "hyprctl dispatch workspace e+1",
+        "on-scroll-down": "hyprctl dispatch workspace e-1"
+    },
+    "custom/ws3": {
+        "exec": "cat $XDG_RUNTIME_DIR/wsctx/$WAYBAR_OUTPUT_NAME-3.json",
+        "return-type": "json", "interval": 60, "signal": 9,
+        "on-click": "hyprctl dispatch workspace 3",
+        "on-scroll-up": "hyprctl dispatch workspace e+1",
+        "on-scroll-down": "hyprctl dispatch workspace e-1"
+    },
+    "custom/ws4": {
+        "exec": "cat $XDG_RUNTIME_DIR/wsctx/$WAYBAR_OUTPUT_NAME-4.json",
+        "return-type": "json", "interval": 60, "signal": 9,
+        "on-click": "hyprctl dispatch workspace 4",
+        "on-scroll-up": "hyprctl dispatch workspace e+1",
+        "on-scroll-down": "hyprctl dispatch workspace e-1"
+    },
+    "custom/ws5": {
+        "exec": "cat $XDG_RUNTIME_DIR/wsctx/$WAYBAR_OUTPUT_NAME-5.json",
+        "return-type": "json", "interval": 60, "signal": 9,
+        "on-click": "hyprctl dispatch workspace 5",
+        "on-scroll-up": "hyprctl dispatch workspace e+1",
+        "on-scroll-down": "hyprctl dispatch workspace e-1"
+    },
+    "custom/ws6": {
+        "exec": "cat $XDG_RUNTIME_DIR/wsctx/$WAYBAR_OUTPUT_NAME-6.json",
+        "return-type": "json", "interval": 60, "signal": 9,
+        "on-click": "hyprctl dispatch workspace 6",
+        "on-scroll-up": "hyprctl dispatch workspace e+1",
+        "on-scroll-down": "hyprctl dispatch workspace e-1"
+    },
+    "custom/ws7": {
+        "exec": "cat $XDG_RUNTIME_DIR/wsctx/$WAYBAR_OUTPUT_NAME-7.json",
+        "return-type": "json", "interval": 60, "signal": 9,
+        "on-click": "hyprctl dispatch workspace 7",
+        "on-scroll-up": "hyprctl dispatch workspace e+1",
+        "on-scroll-down": "hyprctl dispatch workspace e-1"
+    },
+    "custom/ws8": {
+        "exec": "cat $XDG_RUNTIME_DIR/wsctx/$WAYBAR_OUTPUT_NAME-8.json",
+        "return-type": "json", "interval": 60, "signal": 9,
+        "on-click": "hyprctl dispatch workspace 8",
+        "on-scroll-up": "hyprctl dispatch workspace e+1",
+        "on-scroll-down": "hyprctl dispatch workspace e-1"
+    },
+    "custom/ws9": {
+        "exec": "cat $XDG_RUNTIME_DIR/wsctx/$WAYBAR_OUTPUT_NAME-9.json",
+        "return-type": "json", "interval": 60, "signal": 9,
+        "on-click": "hyprctl dispatch workspace 9",
+        "on-scroll-up": "hyprctl dispatch workspace e+1",
+        "on-scroll-down": "hyprctl dispatch workspace e-1"
     },
 
     "custom/brightness": {

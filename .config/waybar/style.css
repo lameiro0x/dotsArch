@@ -55,57 +55,130 @@ window#waybar {
 }
 
 /* ─── WINDOW / ACTIVE APP ───────────────────────────── */
-#window {
-    color:     #808080;
+/* #909090, not #808080: the workspace labels next door sit at #c8c8c8, and an
+   idle workspace's name must not out-contrast the window you are actually
+   working in. Same secondary step the right-hand icons use. */
+#custom-window {
+    color:     #909090;
     padding:   0 14px;
     font-size: 13px;
     min-width: 56px;
 }
 
-#window.empty {
+#custom-window.empty {
     color:     #2e2e2e;
     min-width: 0;
     padding:   0 4px;
 }
 
-/* ─── WORKSPACES ────────────────────────────────────── */
+/* ─── WORKSPACES WITH CONTEXT ────────────────────────
+   Each workspace is its own #custom-wsN module inside the #workspaces group.
+   The label text arrives pre-tinted as Pango markup from wsctx-daemon.py, so
+   this stylesheet owns the pill and the rhythm, and the daemon owns the two
+   ink levels inside the pill.
+
+   Motion: the pill eases on Hyprland's own `snap` curve (0.25, 1, 0.5, 1 —
+   see hyprland.conf), so the bar and the compositor move with the same hand.
+   Focus changes fill, ink and glow, and nothing else: padding is equal in both
+   states and both clip their label to the same length, so no slot ever
+   changes width when focus moves. That is what makes the easing readable —
+   an animation competing with a reflow just looks like a stutter.
+   260ms rather than the 150ms used elsewhere in this bar, because this is the
+   one element big enough for the curve to be legible.
+   ──────────────────────────────────────────────────── */
 #workspaces {
     padding: 0 4px;
     margin:  0;
 }
 
-#workspaces button {
-    all:           unset;
+#workspaces > box,
+#workspaces widget {
+    background: transparent;
+}
+
+/* The empty slot: a CJK numeral, deliberately near-invisible.
+   It marks that the workspace exists without competing for attention. */
+#custom-ws1, #custom-ws2, #custom-ws3, #custom-ws4, #custom-ws5,
+#custom-ws6, #custom-ws7, #custom-ws8, #custom-ws9 {
     background:    transparent;
-    color:         #585858;
+    color:         #2e2e2e;
     border-radius: 100px;
-    padding:       3px 10px;
-    margin:        3px 1px;
+    padding:       3px 11px;
+    margin:        3px 3px;
     min-width:     28px;
-    font-size:     14px;
-    font-family:   "Noto Sans CJK SC", "Noto Sans", sans-serif;
-    transition:    all 150ms ease;
+    box-shadow:    inset 0 0 0 0 rgba(255, 255, 255, 0);
+
+    transition-property:        background-color, color, box-shadow;
+    transition-duration:        260ms;
+    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* Active: solid white pill + black symbol — max contrast */
-#workspaces button.active {
-    background:  #ffffff;
-    color:       #080808;
-    font-weight: 700;
-    padding:     3px 13px;
-    min-width:   32px;
-    border:      none;
-    box-shadow:  none;
+/* A workspace that holds something switches to the bar's text font.
+   #6a6a6a rather than the old #585858: once a slot carries a word instead of
+   a numeral it has to clear the 3:1 contrast floor, and #585858 sits at 2.71. */
+#workspaces .occupied {
+    font-family:    "JetBrainsMono Nerd Font", monospace;
+    font-size:      13px;
+    color:          #6a6a6a;
+    letter-spacing: 0;
+
+    /* No min-width: the daemon pads every label to a fixed cell count, so
+       occupied slots are already identical in width and left-aligned. Doing
+       it there rather than here is what buys the column alignment — a CSS
+       floor would centre a short label inside a wide box instead. */
 }
 
-#workspaces button:hover:not(.active) {
+/* Active: solid white pill — the signature of this bar, kept.
+   Padding is identical to the inactive state; only min-width grows, so the
+   pill appears to stretch rather than to jump, and the neighbours slide on the
+   same curve instead of snapping to a new position.
+   The glow is the one thing that makes the arrival feel like it settles: it is
+   pure white at 10%, which on #0e0e10 is visible but never reads as a colour. */
+#workspaces .active {
+    background: #ffffff;
+    color:      #080808;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.10);
+}
+
+/* A session that is blocked on you.
+   A ring, not a glyph. Pre-attentive vision reads a closed contour; it does
+   not read a small blob, and a bullet would have been ~7px of ink losing to
+   2500px of white pill a hundred pixels away — and invisible outright on the
+   active slot, white on white. The ring is ~290px of the same white, it needs
+   no colour the bar does not already use, and `box-shadow` does not affect
+   layout, so nothing reflows. It borrows the 1px border the islands already
+   use rather than inventing a new vocabulary. */
+#workspaces .waiting:not(.active) {
+    box-shadow: inset 0 0 0 1px #ffffff;
+}
+
+/* On the white pill the ring has to invert to stay visible at all. */
+#workspaces .waiting.active {
+    box-shadow: inset 0 0 0 2px #080808,
+                0 0 12px rgba(255, 255, 255, 0.10);
+}
+
+/* A slot that belongs to the other monitor, or does not exist. */
+#workspaces .off {
+    padding:   0;
+    margin:    0;
+    min-width: 0;
+}
+
+/* Every slot is clickable, including the empty ones, so every slot answers
+   the pointer. */
+#workspaces .occupied:hover:not(.active),
+#workspaces .empty:hover:not(.active) {
     background: rgba(255, 255, 255, 0.08);
-    color:      #b8b8b8;
 }
 
-#workspaces button.urgent {
-    background: rgba(180, 60, 60, 0.28);
-    color:      #e08080;
+/* An empty slot holds one glyph, so it needs a floor wide enough to stay a
+   pill rather than collapsing to a lozenge. Applied in BOTH states: making
+   only the active one wider would have re-centred the whole island by 24px
+   the instant you switched to a free workspace, which is the reflow this
+   block exists to prevent. */
+#workspaces .empty {
+    min-width: 48px;
 }
 
 /* ─── BRIGHTNESS ────────────────────────────────────── */
