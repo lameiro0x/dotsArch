@@ -1,0 +1,48 @@
+[Unit]
+Description=Waybar (Hyprland)
+Documentation=man:waybar(5)
+# The bar reads the JSON that wsctx-daemon publishes under $XDG_RUNTIME_DIR.
+# Not a hard Requires=: a bar with empty workspace slots still beats no bar.
+Wants=wsctx.service
+After=wsctx.service
+
+# No start-rate limit on purpose. The default (5 starts / 10 s, then give up)
+# reintroduces the exact failure being fixed: a burst of memory pressure would
+# trip the limit and leave the bar dead until a manual restart. A genuinely
+# broken config instead loops every 3 s, which is loud in the journal and
+# harmless -- and the config is gated before it ever lands here anyway.
+# This belongs in [Unit]; systemd ignores it in [Service] with only a log line.
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/waybar
+
+# The whole point of this unit. Waybar was launched by `exec-once = waybar`,
+# which supervises nothing: on 2026-08-01 it took a SIGBUS in fdopen() during a
+# global memory shortage (zram 100% full, 191 OOM events that boot, all caused
+# by chrome-headless under a kitty scope) and simply never came back. The bar
+# stayed gone for hours. Under systemd it comes back in three seconds.
+Restart=always
+RestartSec=3
+
+# systemd gives user services oom_score_adj=200, while everything Hyprland
+# starts via exec-once inherits 0. Moving the bar under systemd unchanged would
+# double its attractiveness to the OOM killer, so pin it back down.
+# Measured: this lands on 100, not 0. Lowering oom_score_adj below the value the
+# process already carries needs CAP_SYS_RESOURCE, and the user manager itself
+# sits at 100, so the kernel clamps there and systemd starts the unit anyway.
+# 100 still beats the 200 default. Don't chase the last 100 points -- it needs a
+# root-owned /etc/systemd/system/user@.service.d/ drop-in affecting the whole
+# session, and across 191 OOM events the killer never once picked the bar: at
+# ~90 MB it scores nowhere near the 1.8 GB chrome-headless processes.
+OOMScoreAdjust=0
+# Keep the bar's pages out of reclaim while zram is thrashing. This is what
+# actually mitigates the SIGBUS: the crash was a failed page fault under
+# pressure, not an OOM kill.
+MemoryLow=128M
+
+[Install]
+# Deliberately no WantedBy. default.target is reached before Hyprland exists,
+# so an enabled unit would just flap against a missing Wayland socket.
+# hyprland.conf starts this explicitly once the compositor is up.
