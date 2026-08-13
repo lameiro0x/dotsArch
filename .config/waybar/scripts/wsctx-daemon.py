@@ -106,6 +106,16 @@ SHELLS = {"fish", "bash", "zsh", "sh", "dash"}
 # Anything Claude Code animates into the title. Stripped before display.
 SPINNER = re.compile(r"[⠀-⣿✳✲✻·•]+")
 
+# Desktop furniture: pinned, always-visible panels that happen to be Wayland
+# toplevels. Hyprland reports them on whichever workspace they last mapped on,
+# but `pinned` means they are drawn on all of them, so treating one as the
+# content of a workspace is a lie in both directions — it makes an empty slot
+# read "occupied" and it steals the label from the window actually being used.
+# gestorclaude (Torre) is the rack of live Claude Code sessions, pinned by
+# ~/.config/gestorclaude/gestorclaude.conf; it describes this bar's subject
+# matter rather than being part of it.
+PANEL_CLASSES = {"gestorclaude"}
+
 
 # ── Hyprland IPC ────────────────────────────────────────────────────────────
 
@@ -458,6 +468,10 @@ def collect() -> dict | None:
             continue
         if not c.get("mapped", True) or c.get("hidden", False):
             continue
+        # A pinned panel is on every workspace of its monitor, so it is on none
+        # of them as far as a ledger is concerned.
+        if (c.get("class") or "").lower() in PANEL_CLASSES and c.get("pinned"):
+            continue
         by_ws.setdefault(ws, []).append(c)
 
     entries: dict[int, dict] = {}
@@ -561,11 +575,23 @@ def publish(state: dict, outdir: Path, previous: dict) -> dict:
 
 # ── Main loop ───────────────────────────────────────────────────────────────
 
-def run_once() -> int:
-    state = collect()
-    if state is None:
-        print("cannot reach Hyprland", file=sys.stderr)
-        return 1
+def run_once(wait_s: float = 0.0) -> int:
+    # `--wait` exists for the ExecStartPre in wsctx.service. That start can be
+    # ordered before Waybar's but not before the compositor's: the user manager
+    # reaches default.target at login, minutes before greetd hands over to
+    # Hyprland. Without a wait the seeding pass fails instantly, Waybar comes up
+    # to eleven missing files, and its bare `cat` modules log one error per slot
+    # per interval until the daemon's first event. Waiting here is what keeps
+    # the ordering promise (`After=wsctx.service`) worth anything.
+    deadline = time.monotonic() + max(0.0, wait_s)
+    while True:
+        state = collect()
+        if state is not None:
+            break
+        if time.monotonic() >= deadline:
+            print("cannot reach Hyprland", file=sys.stderr)
+            return 1
+        time.sleep(0.5)
     outdir = Path(runtime_dir()) / "wsctx"
     publish(state, outdir, {})
     # Only echo to a terminal. Under systemd this runs as ExecStartPre and
@@ -586,7 +612,14 @@ def run_once() -> int:
 
 def main() -> int:
     if "--once" in sys.argv:
-        return run_once()
+        wait_s = 0.0
+        if "--wait" in sys.argv:
+            try:
+                wait_s = float(sys.argv[sys.argv.index("--wait") + 1])
+            except (IndexError, ValueError):
+                print("--wait needs a number of seconds", file=sys.stderr)
+                return 2
+        return run_once(wait_s)
 
     outdir = Path(runtime_dir()) / "wsctx"
     previous: dict = {}

@@ -1,14 +1,39 @@
 [Unit]
 Description=Workspace context for Waybar (Hyprland)
 Documentation=file:%h/.config/waybar/scripts/wsctx-daemon.py
-PartOf=graphical-session.target
-After=graphical-session.target
+
+# Deliberately no PartOf=/After=graphical-session.target. greetd starts Hyprland
+# directly and nothing on this machine ever activates that target, so an
+# ordering against it never resolves — and PartOf= against a target that never
+# starts is a stop rule that can never fire, which reads like supervision and is
+# not. The compositor is handled inside the daemon instead: it polls for the
+# socket at 1 Hz and reconnects on its own, so "Hyprland is not up yet" is a
+# state it waits in rather than an error it dies of.
+
+# No start-rate limit, for the same reason as waybar.service — and this unit is
+# where that omission was actually paid for. On the 2026-08-10 boot the unit was
+# started at default.target, minutes before the compositor existed; the seeding
+# ExecStartPre exited 1 with "cannot reach Hyprland", Restart=always retried,
+# and after 24 attempts in ~30 s the default limit (5 starts / 10 s) latched the
+# unit into failed/start-limit-hit **permanently**. Nothing restarts it later,
+# so the workspace slots stayed empty for a day while Waybar itself looked
+# perfectly healthy. This belongs in [Unit]; systemd ignores it in [Service]
+# with a single log line.
+StartLimitIntervalSec=0
 
 [Service]
 Type=simple
 # Populate the state files before Waybar's first read, so the bar is never
-# blank on login while waiting for the first Hyprland event.
-ExecStartPre=%h/.config/waybar/scripts/wsctx-daemon.py --once
+# blank on login while waiting for the first Hyprland event. waybar.service
+# orders itself After= this unit, and a start job is not "started" until
+# ExecStartPre has returned, so this is what makes that ordering mean "the
+# files exist" rather than "the process was spawned".
+#
+# --wait: at login the compositor is not up yet, so seeding has to be allowed
+# to block for it. -: seeding is an optimisation, never a reason to fail the
+# unit — the daemon below reaches the same state on its own, one second after
+# Hyprland appears.
+ExecStartPre=-%h/.config/waybar/scripts/wsctx-daemon.py --once --wait 45
 ExecStart=%h/.config/waybar/scripts/wsctx-daemon.py
 Restart=always
 RestartSec=2
