@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════
    Waybar — Black Pill · High Contrast
-   Pill:    #0e0e10  (solid black, no transparency)
+   Pill:    rgba(14,14,16,0.80), blurred layer (layerrule in hyprland.conf)
    Text:    #c8c8c8  /  #888888  (gray scale only)
    Active:  #ffffff bg + #080808 text  (pure contrast)
    ═══════════════════════════════════════════════════ */
@@ -34,7 +34,7 @@ window#waybar {
 .modules-left,
 .modules-center,
 .modules-right {
-    background:    #0e0e10;
+    background:    rgba(14, 14, 16, 0.80);
     border-radius: 100px;
     margin-top:    8px;
     margin-bottom: 4px;
@@ -254,7 +254,7 @@ window#waybar {
 
 /* ─── TOOLTIP ────────────────────────────────────────── */
 tooltip {
-    background:    #0e0e10;
+    background:    rgba(14, 14, 16, 0.95);
     border:        1px solid rgba(255, 255, 255, 0.10);
     border-radius: 10px;
     color:         #cccccc;
